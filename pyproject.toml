@@ -1,0 +1,36 @@
+[project]
+name = "agent-langgraph"
+version = "0.1.0"
+description = "Prove a LangGraph agent is a drop-in for a hand-rolled one: same ports, equivalent verdicts, offline with a fake model."
+requires-python = ">=3.11"
+# langgraph is pre-added so `uv sync` resolves it once from PyPI — building the graph is the
+# task, wrangling the dependency tree is not. Everything runs offline after this install.
+dependencies = [
+    "langgraph>=1.0",
+    "langgraph-checkpoint-sqlite>=2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# `core/` is a top-level package here; put the root on the path so `from core... import ...`
+# resolves with no install step. asyncio_mode=auto lets `async def test_*` run without a marker.
+pythonpath = ["."]
+asyncio_mode = "auto"
